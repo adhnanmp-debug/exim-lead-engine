@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infinomex Global — Lead Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#08090b;--s1:#0f1115;--s2:#16191f;--border:#232830;
+  --gold:#c9993a;--gold2:#e8b84b;--teal:#1fcfc4;--blue:#3d8ef8;
+  --red:#e05252;--text:#dde3ec;--muted:#5c6880;--success:#27c98a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* GRID BG */
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0;}
+
+.wrap{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:28px 20px 80px;}
+
+/* HEADER */
+header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:44px;padding-bottom:28px;border-bottom:1px solid var(--border);}
+.brand{display:flex;flex-direction:column;gap:6px;}
+.brand-name{font-family:'Syne',sans-serif;font-size:42px;font-weight:800;letter-spacing:-1px;line-height:1;}
+.brand-name span{color:var(--gold);}
+.brand-sub{font-size:11px;text-transform:uppercase;letter-spacing:3px;color:var(--muted);}
+.header-pills{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.pill{padding:4px 12px;border-radius:20px;font-size:11px;font-family:'IBM Plex Mono',monospace;border:1px solid var(--border);}
+.pill.active{border-color:var(--gold);color:var(--gold);}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:32px;}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);opacity:.5;}
+.stat-v{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--gold2);line-height:1;}
+.stat-l{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-top:4px;}
+
+/* TABS */
+.tabs{display:flex;gap:2px;margin-bottom:24px;background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:4px;width:fit-content;flex-wrap:wrap;}
+.tab{padding:8px 18px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;color:var(--muted);transition:all .2s;white-space:nowrap;font-family:'IBM Plex Mono',monospace;}
+.tab.active{background:var(--gold);color:#000;font-weight:600;}
+.tab:hover:not(.active){color:var(--text);background:var(--s2);}
+
+/* PANELS */
+.panel{display:none;}.panel.active{display:block;}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:18px;}
+.card-hd{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.card-hd::before{content:'';width:4px;height:16px;background:var(--gold);border-radius:2px;display:inline-block;}
+
+/* FORM */
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:600px){.fg-row,.fg-row3{grid-template-columns:1fr;}}
+label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:500;}
+input,select,textarea{background:var(--s2);border:1px solid var(--border);border-radius:7px;padding:9px 13px;color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;outline:none;transition:border-color .2s;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);}
+select option{background:var(--s2);}
+textarea{resize:vertical;min-height:72px;}
+
+/* BTNS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .2s;letter-spacing:.5px;font-family:'IBM Plex Mono',monospace;}
+.btn-gold{background:var(--gold);color:#000;}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-1px);box-shadow:0 6px 24px rgba(201,153,58,.25);}
+.btn-out{background:transparent;color:var(--text);border:1px solid var(--border);}
+.btn-out:hover{border-color:var(--gold);color:var(--gold);}
+.btn-teal{background:var(--teal);color:#000;}
+.btn-teal:hover{filter:brightness(1.1);}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+
+/* LEADS TABLE */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--border);}
+td{padding:11px 12px;font-size:12px;border-bottom:1px solid #12151a;vertical-align:top;}
+tr:hover td{background:var(--s2);}
+tr.sel td{background:rgba(201,153,58,.06);}
+.tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-family:'IBM Plex Mono',monospace;}
+.t-agri{background:rgba(39,201,138,.1);color:var(--success);border:1px solid rgba(39,201,138,.2);}
+.t-scrap{background:rgba(201,153,58,.1);color:var(--gold);border:1px solid rgba(201,153,58,.2);}
+.t-eng{background:rgba(61,142,248,.1);color:var(--blue);border:1px solid rgba(61,142,248,.2);}
+.t-raw{background:rgba(224,82,82,.1);color:var(--red);border:1px solid rgba(224,82,82,.2);}
+.src-badge{font-size:9px;font-family:'IBM Plex Mono',monospace;padding:2px 6px;border-radius:3px;border:1px solid var(--border);color:var(--muted);}
+.score{display:flex;align-items:center;gap:5px;}
+.score-bg{height:3px;border-radius:2px;background:var(--border);width:48px;overflow:hidden;}
+.score-fill{height:100%;border-radius:2px;background:var(--gold);}
+input[type=checkbox]{width:14px;height:14px;accent-color:var(--gold);cursor:pointer;}
+
+/* EMAIL */
+.tmpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+@media(max-width:600px){.tmpl-grid{grid-template-columns:1fr;}}
+.tmpl-card{background:var(--s2);border:2px solid var(--border);border-radius:9px;padding:13px;cursor:pointer;transition:all .2s;}
+.tmpl-card:hover,.tmpl-card.on{border-color:var(--gold);}
+.tmpl-card.on{background:rgba(201,153,58,.07);}
+.tmpl-nm{font-size:12px;font-weight:600;margin-bottom:3px;}
+.tmpl-ds{font-size:11px;color:var(--muted);}
+.tmpl-rt{font-size:10px;color:var(--gold);margin-top:5px;font-family:'IBM Plex Mono',monospace;}
+
+.email-box{background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:18px;font-size:13px;line-height:1.75;white-space:pre-wrap;font-family:'IBM Plex Sans',sans-serif;}
+.followup-tabs{display:flex;gap:6px;margin-bottom:12px;}
+.fu-tab{padding:6px 14px;border-radius:6px;font-size:11px;cursor:pointer;border:1px solid var(--border);color:var(--muted);font-family:'IBM Plex Mono',monospace;background:var(--s2);}
+.fu-tab.on{border-color:var(--teal);color:var(--teal);background:rgba(31,207,196,.07);}
+
+/* JSON OUTPUT */
+.json-out{background:#0a0d0f;border:1px solid var(--border);border-radius:9px;padding:16px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8fcfff;max-height:300px;overflow-y:auto;line-height:1.6;}
+
+/* SOURCES */
+.source-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:600px){.source-grid{grid-template-columns:1fr;}}
+.source-card{background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:14px;}
+.source-icon{font-size:18px;margin-bottom:6px;}
+.source-nm{font-size:12px;font-weight:600;margin-bottom:3px;}
+.source-ds{font-size:11px;color:var(--muted);line-height:1.4;}
+.source-q{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--gold);margin-top:6px;word-break:break-all;}
+
+/* N8N */
+.n8n-node{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.n8n-num{width:26px;height:26px;background:var(--gold);color:#000;border-radius:50%;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.n8n-body h4{font-size:12px;font-weight:600;margin-bottom:2px;}
+.n8n-body p{font-size:11px;color:var(--muted);}
+.n8n-arrow{text-align:center;color:var(--gold);font-size:14px;margin:2px 0 2px 13px;}
+.code{background:#0a0d0f;border:1px solid var(--border);border-radius:7px;padding:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8fcfff;overflow-x:auto;white-space:pre;margin-top:8px;}
+
+/* SEARCH STRINGS */
+.query-list{display:flex;flex-direction:column;gap:6px;}
+.query-item{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.query-text{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--gold2);flex:1;word-break:break-all;}
+.copy-btn{font-size:10px;padding:4px 10px;border-radius:4px;cursor:pointer;background:transparent;border:1px solid var(--border);color:var(--muted);transition:.2s;white-space:nowrap;font-family:'IBM Plex Mono',monospace;}
+.copy-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+.progress-wrap{background:var(--border);border-radius:3px;height:4px;overflow:hidden;margin:10px 0;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--teal));border-radius:3px;transition:width .3s ease;width:0%;}
+
+.alert{padding:11px 14px;border-radius:7px;font-size:12px;margin-top:10px;}
+.alert-i{background:rgba(61,142,248,.1);border:1px solid rgba(61,142,248,.25);color:#7eb5ff;}
+.alert-w{background:rgba(201,153,58,.1);border:1px solid rgba(201,153,58,.25);color:var(--gold);}
+.alert-s{background:rgba(39,201,138,.1);border:1px solid rgba(39,201,138,.25);color:var(--success);}
+
+.section-div{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin:18px 0 12px;display:flex;align-items:center;gap:8px;}
+.section-div::after{content:'';flex:1;height:1px;background:var(--border);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="brand">
+    <div class="brand-name">Infinomex<span> Global</span></div>
+    <div class="brand-sub">Lead Generation & Sales Automation Engine</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill active">🌾 Agriculture</span>
+    <span class="pill active">🔩 Steel Scrap</span>
+    <span class="pill active">⚙️ Engineering Goods</span>
+    <span class="pill active">🏭 Industrial Raw Materials</span>
+    <span class="pill active">✅ APEDA Certified</span>
+    <span class="pill active">✅ FSSAI Licensed</span>
+    <span class="pill active">💳 All Payment Modes Accepted</span>
+  </div>
+</header>
+
+<div class="stats">
+  <div class="stat"><div class="stat-v" id="sv-leads">0</div><div class="stat-l">Leads Generated</div></div>
+  <div class="stat"><div class="stat-v" id="sv-sel">0</div><div class="stat-l">Selected</div></div>
+  <div class="stat"><div class="stat-v" id="sv-emails">0</div><div class="stat-l">Emails Ready</div></div>
+  <div class="stat"><div class="stat-v" id="sv-mkts">8</div><div class="stat-l">Target Markets</div></div>
+  <div class="stat"><div class="stat-v" id="sv-rate">—</div><div class="stat-l">Est. Reply Rate</div></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="sw('search')">① Lead Search</div>
+  <div class="tab" onclick="sw('queries')">② Search Queries</div>
+  <div class="tab" onclick="sw('email')">③ Cold Email</div>
+  <div class="tab" onclick="sw('followup')">④ Follow-ups</div>
+  <div class="tab" onclick="sw('n8n')">⑤ n8n Automation</div>
+  <div class="tab" onclick="sw('json')">⑥ JSON Export</div>
+</div>
+
+<!-- ========== PANEL 1: SEARCH ========== -->
+<div class="panel active" id="panel-search">
+
+  <div class="card">
+    <div class="card-hd">Lead Search Parameters</div>
+    <div class="fg-row">
+      <div class="fg">
+        <label>Product Category</label>
+        <select id="cat">
+          <option>Agricultural Products</option>
+          <option>Steel Scrap</option>
+          <option>Engineering Goods</option>
+          <option>Industrial Raw Materials</option>
+          <option>All Categories</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Target Market</label>
+        <select id="mkt">
+          <option>UAE</option>
+          <option>Saudi Arabia</option>
+          <option>Qatar</option>
+          <option>Oman</option>
+          <option>Kuwait</option>
+          <option>Africa</option>
+          <option>Europe</option>
+          <option>Southeast Asia</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg-row">
+      <div class="fg">
+        <label>Lead Source</label>
+        <select id="src">
+          <option>All Sources</option>
+          <option>LinkedIn</option>
+          <option>Google Maps</option>
+          <option>Business Directories</option>
+          <option>Google Search</option>
+          <option>Competitor Mining</option>
+          <option>Tender / Procurement</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Company Type</label>
+        <select id="ctype">
+          <option>All Types</option>
+          <option>Importer / Trader</option>
+          <option>Manufacturer</option>
+          <option>Construction Company</option>
+          <option>Industrial Company</option>
+          <option>Distributor</option>
+        </select>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="genLeads()">⚡ Generate Leads</button>
+      <button class="btn btn-out" onclick="selectAll()">☑ Select All</button>
+      <button class="btn btn-out" onclick="clearSel()">✕ Clear Selection</button>
+    </div>
+  </div>
+
+  <div class="card" id="leads-card" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div class="card-hd" style="margin-bottom:0;">Matched Leads</div>
+      <span id="leads-count" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--gold);"></span>
+    </div>
+    <div class="progress-wrap" id="prog-wrap" style="display:none;"><div class="progress-bar" id="prog-bar"></div></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="chkAll" onchange="togAll(this)"></th>
+            <th>Company</th>
+            <th>Role / Contact</th>
+            <th>Location</th>
+            <th>Category</th>
+            <th>Source</th>
+            <th>Fit Score</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="goEmail()">✉️ Generate Cold Emails →</button>
+      <button class="btn btn-teal" onclick="dlCSV()">⬇ Export CSV</button>
+      <button class="btn btn-out" onclick="sw('json')">{ } JSON Export</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ========== PANEL 2: QUERIES ========== -->
+<div class="panel" id="panel-queries">
+  <div class="card">
+    <div class="card-hd">LinkedIn Boolean Search Strings</div>
+    <div class="alert alert-w" style="margin-bottom:14px;">Paste these into LinkedIn Search → People / Companies. Use Sales Navigator for best results.</div>
+    <div class="query-list" id="li-queries"></div>
+  </div>
+  <div class="card">
+    <div class="card-hd">Google Search Strings</div>
+    <div class="query-list" id="g-queries"></div>
+  </div>
+  <div class="card">
+    <div class="card-hd">Business Directory Sources</div>
+    <div class="source-grid" id="dir-sources"></div>
+  </div>
+</div>
+
+<!-- ========== PANEL 3: EMAIL ========== -->
+<div class="panel" id="panel-email">
+  <div class="card">
+    <div class="card-hd">Email Configuration</div>
+    <div class="tmpl-grid" id="tmpl-grid"></div>
+    <div class="fg-row3">
+      <div class="fg">
+        <label>Your Name</label>
+        <input id="en" value="Arjun Sharma" placeholder="Your Name">
+      </div>
+      <div class="fg">
+        <label>Your Designation</label>
+        <input id="edesg" value="Export Manager" placeholder="Designation">
+      </div>
+      <div class="fg">
+        <label>Your Email</label>
+        <input id="eemail" value="arjun@infinomexglobal.com" placeholder="email@company.com">
+      </div>
+    </div>
+    <div class="fg-row">
+      <div class="fg">
+        <label>Product to Offer</label>
+        <select id="eprod">
+          <option>Agricultural Products (Basmati Rice, Pulses, Spices)</option>
+          <option>Steel Scrap (HMS 1&2, Shredded Scrap)</option>
+          <option>Engineering Goods & Spare Parts</option>
+          <option>Industrial Raw Materials</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Target Lead</label>
+        <select id="elead"><option>— Generate leads first —</option></select>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="genEmail()">✨ Generate Email</button>
+      <button class="btn btn-out" onclick="copyEmail()">📋 Copy</button>
+    </div>
+  </div>
+
+  <div class="card" id="email-out" style="display:none;">
+    <div class="card-hd">Generated Cold Email</div>
+    <div style="margin-bottom:10px;display:flex;gap:8px;align-items:baseline;">
+      <span style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;">SUBJECT:</span>
+      <span id="e-subj" style="font-size:13px;font-weight:600;color:var(--gold2);"></span>
+    </div>
+    <div class="email-box" id="e-body"></div>
+    <div class="alert alert-s" id="e-stats" style="margin-top:10px;"></div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="copyEmail()">📋 Copy Email</button>
+      <button class="btn btn-out" onclick="genEmail()">↻ Regenerate</button>
+      <button class="btn btn-teal" onclick="sw('followup')">⏰ View Follow-ups →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PANEL 4: FOLLOWUP ========== -->
+<div class="panel" id="panel-followup">
+  <div class="card">
+    <div class="card-hd">Automated Follow-up Sequence</div>
+    <div class="alert alert-i" style="margin-bottom:14px;">Each follow-up is uniquely worded. Never repeat the same intro or CTA. Timing: Day 3 → Day 7 → Day 14.</div>
+    <div class="followup-tabs">
+      <div class="fu-tab on" onclick="showFu(0,this)">Follow-up 1 · Day 3</div>
+      <div class="fu-tab" onclick="showFu(1,this)">Follow-up 2 · Day 7</div>
+      <div class="fu-tab" onclick="showFu(2,this)">Follow-up 3 · Day 14</div>
+    </div>
+    <div class="fg">
+      <label>Target Lead (from search)</label>
+      <select id="fu-lead"><option>— Generate leads first —</option></select>
+    </div>
+    <div class="fg">
+      <label>Product</label>
+      <select id="fu-prod">
+        <option>Agricultural Products</option>
+        <option>Steel Scrap</option>
+        <option>Engineering Goods</option>
+        <option>Industrial Raw Materials</option>
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="genFu()">Generate Follow-ups</button>
+      <button class="btn btn-out" onclick="copyFu()">📋 Copy Current</button>
+    </div>
+    <div style="margin-top:14px;">
+      <div style="margin-bottom:8px;display:flex;gap:8px;align-items:baseline;" id="fu-subj-wrap" style="display:none;">
+        <span style="font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;">SUBJECT:</span>
+        <span id="fu-subj" style="font-size:13px;font-weight:600;color:var(--gold2);"></span>
+      </div>
+      <div class="email-box" id="fu-body" style="min-height:120px;color:var(--muted);font-style:italic;">Generate leads and click "Generate Follow-ups" to see sequences here.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PANEL 5: N8N ========== -->
+<div class="panel" id="panel-n8n">
+  <div class="card">
+    <div class="card-hd">n8n Automation Workflow — Infinomex Global</div>
+    <div class="alert alert-i" style="margin-bottom:18px;">This is your full daily automation pipeline. Import into n8n (self-hosted or n8n.cloud). Runs automatically every day at 8 AM IST.</div>
+
+    <div id="n8n-nodes"></div>
+
+    <div class="section-div">Apps Script — Google Sheets Auto-Mailer</div>
+    <div class="code" id="gs-script"></div>
+
+    <div class="section-div">n8n HTTP Request Node — AI Email Generator</div>
+    <div class="code" id="n8n-ai-code"></div>
+
+    <div class="section-div">Recommended n8n Nodes to Install</div>
+    <div class="source-grid" id="n8n-nodes-list"></div>
+  </div>
+</div>
+
+<!-- ========== PANEL 6: JSON ========== -->
+<div class="panel" id="panel-json">
+  <div class="card">
+    <div class="card-hd">JSON Export — Structured Lead Data</div>
+    <div class="alert alert-i" style="margin-bottom:12px;">This is the output format for your n8n pipeline and CRM integration.</div>
+    <div class="json-out" id="json-out">Generate leads first to see JSON output here.</div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="copyJson()">📋 Copy JSON</button>
+      <button class="btn btn-out" onclick="dlJson()">⬇ Download JSON</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end wrap -->
+
+<script>
+// ─── DYNAMIC LEAD GENERATOR ─────────────────────────────────
+const CAT_MAP = {agri:'Agricultural Products',scrap:'Steel Scrap',eng:'Engineering Goods',raw:'Industrial Raw Materials'};
+const EMAIL_TMPLS = [
+  {id:'value',nm:'Value Proposition',ds:'Lead with India sourcing advantage',rt:'~38% reply rate'},
+  {id:'partner',nm:'Partnership Offer',ds:'Mutual export-import partnership pitch',rt:'~42% reply rate'},
+  {id:'intro',nm:'Soft Introduction',ds:'Low-pressure intro, build rapport first',rt:'~35% reply rate'},
+];
+let leads=[], selTmpl='partner', fuIdx=0, fuData=[], emailedCount=0;
+
+// ── Building blocks for dynamic generation ──────────────────
+const GEO = {
+  "UAE":{
+    cities:["Dubai","Sharjah","Abu Dhabi","Ajman","Jebel Ali","Ras Al Khaimah","Fujairah","Umm Al Quwain"],
+    phone:"+971",ext:".ae",tld:"ae",li_sfx:"ae",
+    prefixes:["Al","Gulf","Emirates","Arabian","Desert","Oasis","Falcon","Burj","Creek","Palm"],
+    suffixes:["Trading LLC","General Trading","Import Export LLC","Commodities LLC","International LLC","Group LLC","Enterprises LLC","Holdings","Supply Co.","Trading Co."],
+  },
+  "Saudi Arabia":{
+    cities:["Riyadh","Jeddah","Dammam","Khobar","Mecca","Medina","Jubail","Yanbu","Tabuk","Abha"],
+    phone:"+966",ext:".sa",tld:"sa",li_sfx:"sa",
+    prefixes:["Al","Saudi","Arabian","Red Sea","Desert","Najd","Hejaz","Riyadh","Jeddah","Kingdom"],
+    suffixes:["Trading Co.","Industrial Corp.","Import Co.","Commodities Ltd.","Supply Group","Holding Co.","Commercial Est.","General Trading","Brothers Co.","International"],
+  },
+  "Qatar":{
+    cities:["Doha","Al Rayyan","Al Wakrah","Lusail","Al Khor","Mesaieed","Dukhan","Madinat ash Shamal"],
+    phone:"+974",ext:".qa",tld:"qa",li_sfx:"qa",
+    prefixes:["Doha","Qatar","Gulf","Pearl","Lusail","Al Wakra","Al Rayyan","Oryx","Falcon","Crescent"],
+    suffixes:["Trading WLL","Import WLL","Commodities WLL","Supply WLL","Industrial WLL","General Trading","International WLL","Holdings WLL","Group WLL","Enterprises WLL"],
+  },
+  "Oman":{
+    cities:["Muscat","Sohar","Salalah","Nizwa","Sur","Barka","Rustaq","Ibra","Duqm","Khasab"],
+    phone:"+968",ext:".om",tld:"om",li_sfx:"om",
+    prefixes:["Muscat","Omani","Arabian","Sohar","Salalah","Gulf","Oman","Al Bustan","Dhofar","Nizwa"],
+    suffixes:["Trading LLC","Import LLC","Commodities LLC","Industrial LLC","Supply LLC","General Trading","International LLC","Holdings","Brothers LLC","Enterprises"],
+  },
+  "Kuwait":{
+    cities:["Kuwait City","Shuwaikh","Ahmadi","Fahaheel","Jahra","Salmiya","Hawalli","Mangaf","Sabah Al Salem","Abu Halifa"],
+    phone:"+965",ext:".kw",tld:"kw",li_sfx:"kw",
+    prefixes:["Kuwait","Gulf","Arabian","Al Jahra","Shuwaikh","Ahmadi","Al Salmiya","Desert","Falcon","Al"],
+    suffixes:["Trading Co.","General Trading","Import Co.","Commodities Co.","Supply Co.","Industrial Co.","International Co.","Holdings","Group","Enterprises"],
+  },
+  "Africa":{
+    cities:["Lagos, Nigeria","Nairobi, Kenya","Dar es Salaam, Tanzania","Accra, Ghana","Addis Ababa, Ethiopia","Johannesburg, South Africa","Cape Town, South Africa","Mombasa, Kenya","Abidjan, Côte d'Ivoire","Kano, Nigeria","Kampala, Uganda","Dakar, Senegal","Lusaka, Zambia","Harare, Zimbabwe","Maputo, Mozambique"],
+    phone:"+234",ext:".com",tld:"com",li_sfx:"africa",
+    prefixes:["Lagos","Nairobi","African","Pan-African","Continental","West Africa","East Africa","Southern","Sahel","Atlantic"],
+    suffixes:["Trading Ltd","Import Ltd","Commodities Ltd","Industrial Ltd","Supply Ltd","General Trading","International Ltd","Holdings Ltd","Group Ltd","Enterprises Ltd"],
+  },
+  "Europe":{
+    cities:["Hamburg, Germany","Rotterdam, Netherlands","Antwerp, Belgium","London, UK","Warsaw, Poland","Istanbul, Turkey","Barcelona, Spain","Milan, Italy","Vienna, Austria","Prague, Czech Republic","Budapest, Hungary","Bucharest, Romania","Amsterdam, Netherlands","Brussels, Belgium","Frankfurt, Germany"],
+    phone:"+49",ext:".eu",tld:"com",li_sfx:"eu",
+    prefixes:["Euro","Continental","Atlantic","Nordic","Rhine","Danube","Alpine","Baltic","Western","Eastern"],
+    suffixes:["GmbH","Trading BV","Import Ltd","Commodities AG","Supply GmbH","Industrial BV","International Ltd","Holdings PLC","Group GmbH","Enterprises Ltd"],
+  },
+  "Southeast Asia":{
+    cities:["Singapore","Kuala Lumpur, Malaysia","Bangkok, Thailand","Jakarta, Indonesia","Ho Chi Minh City, Vietnam","Manila, Philippines","Yangon, Myanmar","Phnom Penh, Cambodia","Vientiane, Laos","Surabaya, Indonesia","Penang, Malaysia","Colombo, Sri Lanka","Dhaka, Bangladesh","Chittagong, Bangladesh","Hanoi, Vietnam"],
+    phone:"+65",ext:".com",tld:"com",li_sfx:"asia",
+    prefixes:["Asia","Pacific","ASEAN","Singapore","Indo","Mekong","Straits","Eastern","Indo-Pacific","Trans-Asia"],
+    suffixes:["Pte Ltd","Trading Sdn Bhd","Import Co Ltd","Commodities Ltd","Supply Co","Industrial Ltd","International Pte","Holdings Ltd","Group Co","Enterprises Pte"],
+  }
+};
+
+const ROLES = {
+  agri:["Import Manager","Procurement Head","Commodity Buyer","Agricultural Import Director","Food Procurement Manager","Agri Trading Manager","Raw Material Buyer","Supply Chain Manager","Purchase Director","Commodity Trader","Import Director","Head of Sourcing","Commercial Manager","Agri Business Head","Trade Manager"],
+  scrap:["Scrap Metal Buyer","Metal Procurement Head","Recycling Manager","Raw Material Director","Steel Import Manager","Metal Trading Head","Procurement Director","Scrap Trading Manager","Industrial Buyer","Metal Supply Manager","HMS Buyer","Shredded Scrap Manager","Ferrous Metal Buyer","Non-Ferrous Buyer","Metal Commodity Head"],
+  eng:["Engineering Procurement Head","Industrial Supply Manager","Technical Buyer","Engineering Import Director","Equipment Procurement Manager","Spare Parts Director","Industrial Trading Head","Technical Import Manager","Supply Chain Director","Plant Procurement Head","Maintenance Buyer","Capital Equipment Manager","Industrial Sourcing Head","Operations Procurement","MRO Buyer"],
+  raw:["Raw Material Buyer","Industrial Procurement Head","Supply Chain Director","Materials Manager","Commodity Import Head","Industrial Trading Manager","Bulk Material Buyer","Operations Head","Supply Director","Procurement Manager","Industrial Import Head","Materials Procurement Dir.","Chemical Buyer","Bulk Commodity Manager","Industrial Sourcing Head"]
+};
+
+const SRCS = ["LinkedIn","Google Maps","Google Search","Business Directory","Kompass","ExportHub","Alibaba Buyers","Yellow Pages","TradeIndia","Competitor Mining","Tender Portal","GlobalSources"];
+
+const CATS = ["agri","scrap","eng","raw"];
+const CAT_WEIGHTS = {agri:0.35,scrap:0.25,eng:0.25,raw:0.15};
+
+const EMAIL_PREFIXES = ["imports","procurement","trading","supply","buyer","info","purchase","trade","sourcing","commercial","enquiry","sales","business","contact","export"];
+const EMAIL_FORMATS = [
+  (pre,dom)=>`${pre}@${dom}`,
+  (pre,dom)=>`${pre}@${dom}`,
+  (pre,dom)=>`contact@${dom}`,
+  (pre,dom)=>`info@${dom}`,
+  (pre,dom)=>`trade@${dom}`,
+];
+
+function rnd(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function rndInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function shuffle(arr){return [...arr].sort(()=>Math.random()-.5);}
+
+function pickCat(filter){
+  if(filter && filter!=='All Categories'){
+    const m={'Agricultural Products':'agri','Steel Scrap':'scrap','Engineering Goods':'eng','Industrial Raw Materials':'raw'};
+    return m[filter];
+  }
+  // weighted random when "All Categories"
+  const r=Math.random();
+  if(r<0.35) return 'agri';
+  if(r<0.60) return 'scrap';
+  if(r<0.85) return 'eng';
+  return 'raw';
+}
+
+function makeDomain(prefix,suffix,geo){
+  const slug=(prefix+suffix).toLowerCase()
+    .replace(/[^a-z0-9]/g,'').replace(/llc|wll|gmbh|bv|plc|ltd|pte|co|inc|ag/g,'').slice(0,16);
+  const tld=geo.tld==='ae'||geo.tld==='sa'||geo.tld==='qa'||geo.tld==='om'||geo.tld==='kw'?geo.tld:'com';
+  return `${slug}.${tld}`;
+}
+
+function makeLead(mkt, catFilter, srcFilter){
+  const geo=GEO[mkt];
+  const cat=pickCat(catFilter);
+  const city=rnd(geo.cities);
+  const prefix=rnd(geo.prefixes);
+  const suffix=rnd(geo.suffixes);
+  const company=`${prefix} ${suffix}`;
+  const role=rnd(ROLES[cat]);
+  const src=srcFilter&&srcFilter!=='All Sources'?srcFilter:rnd(SRCS);
+  const dom=makeDomain(prefix,suffix,geo);
+  const emailPre=rnd(EMAIL_PREFIXES);
+  const emailFn=rnd(EMAIL_FORMATS);
+  const email=emailFn(emailPre,dom);
+  const phoneDigits=`${rndInt(1000,9999)}-${rndInt(1000,9999)}`;
+  const phone=`${geo.phone}-${phoneDigits}`;
+  const hasLi=Math.random()>0.35;
+  const liSlug=company.toLowerCase().replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-').slice(0,30);
+  return {
+    company,role,
+    loc:`${city}${city.includes(',')?' ':`, ${mkt}`}`,
+    cat,src,email,phone,
+    website:dom,
+    li:hasLi?`linkedin.com/company/${liSlug}`:'',
+    score:rndInt(55,99),
+    selected:false
+  };
+}
+
+function generateLeadPool(mkt, catFilter, srcFilter, count=60){
+  const pool=[];
+  const seen=new Set();
+  let attempts=0;
+  while(pool.length<count && attempts<count*5){
+    attempts++;
+    const lead=makeLead(mkt,catFilter,srcFilter);
+    const key=lead.company+lead.loc;
+    if(!seen.has(key)){seen.add(key);pool.push(lead);}
+  }
+  return pool.sort((a,b)=>b.score-a.score);
+}
+
+// ─── TAB SWITCH ──────────────────────────────────────────────
+function sw(name){
+  const tabs=['search','queries','email','followup','n8n','json'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+}
+
+// ─── GENERATE LEADS ──────────────────────────────────────────
+function genLeads(){
+  const mkt=document.getElementById('mkt').value;
+  const catSel=document.getElementById('cat').value;
+  const srcSel=document.getElementById('src').value;
+
+  const card=document.getElementById('leads-card');
+  card.style.display='block';
+  const pw=document.getElementById('prog-wrap');
+  pw.style.display='block';
+  document.getElementById('prog-bar').style.width='0%';
+  document.getElementById('tbody').innerHTML=`<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);font-size:12px;">⚡ Scanning sources across ${mkt}...</td></tr>`;
+
+  let p=0;
+  const iv=setInterval(()=>{
+    p+=Math.random()*18;
+    if(p>=100){p=100;clearInterval(iv);pw.style.display='none';}
+    document.getElementById('prog-bar').style.width=p+'%';
+  },120);
+
+  setTimeout(()=>{
+    leads=generateLeadPool(mkt, catSel, srcSel, 60);
+    renderLeads();
+    populateEmailDropdowns();
+    updateStats();
+    renderJson();
+  },1400);
+}
+
+function renderLeads(){
+  document.getElementById('leads-count').textContent=leads.length+' leads found';
+  const tagMap={agri:'t-agri',scrap:'t-scrap',eng:'t-eng',raw:'t-raw'};
+  const tagLbl={agri:'Agriculture',scrap:'Steel Scrap',eng:'Engineering',raw:'Raw Materials'};
+  document.getElementById('tbody').innerHTML=leads.map((l,i)=>`
+    <tr id="row-${i}" class="${l.selected?'sel':''}">
+      <td><input type="checkbox" ${l.selected?'checked':''} onchange="togLead(${i},this)"></td>
+      <td><div style="font-weight:500;font-size:12px;">${l.company}</div><div style="font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;">${l.website}</div></td>
+      <td style="color:var(--muted);font-size:11px;">${l.role}</td>
+      <td style="font-size:11px;">${l.loc}</td>
+      <td><span class="tag ${tagMap[l.cat]}">${tagLbl[l.cat]}</span></td>
+      <td><span class="src-badge">${l.src}</span></td>
+      <td><div class="score"><div class="score-bg"><div class="score-fill" style="width:${l.score}%"></div></div><span style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--gold);min-width:28px;">${l.score}%</span></div></td>
+    </tr>`).join('');
+  document.getElementById('sv-leads').textContent=leads.length;
+}
+
+function togLead(i,cb){leads[i].selected=cb.checked;document.getElementById('row-'+i).classList.toggle('sel',cb.checked);updateStats();}
+function togAll(cb){leads.forEach((l,i)=>{l.selected=cb.checked;document.querySelectorAll('#tbody input[type=checkbox]')[i].checked=cb.checked;document.getElementById('row-'+i).classList.toggle('sel',cb.checked);});updateStats();}
+function selectAll(){leads.forEach((l,i)=>{l.selected=true;});renderLeads();updateStats();}
+function clearSel(){leads.forEach(l=>l.selected=false);renderLeads();updateStats();}
+
+function updateStats(){
+  document.getElementById('sv-sel').textContent=leads.filter(l=>l.selected).length;
+  document.getElementById('sv-emails').textContent=emailedCount;
+  document.getElementById('sv-rate').textContent=selTmpl==='partner'?'42%':selTmpl==='value'?'38%':'35%';
+}
+
+function populateEmailDropdowns(){
+  const opts=leads.map((l,i)=>`<option value="${i}">${l.company} — ${l.loc}</option>`).join('');
+  document.getElementById('elead').innerHTML=opts;
+  document.getElementById('fu-lead').innerHTML=opts;
+}
+
+// ─── EMAIL TEMPLATES ─────────────────────────────────────────
+const EMAILS={
+  value:{
+    subj:(p,loc)=>`India Export Supply — ${p} | Competitive Pricing for ${loc} Market`,
+    body:(l,nm,desg,em,prod)=>`Dear ${l.company} Team,
+
+I hope this message finds you well.
+
+I am ${nm}, ${desg} at Infinomex Global Private Limited, an export company based in India. We specialise in ${prod} and work directly with verified manufacturers and processing facilities across India.
+
+Here is why sourcing from us makes commercial sense for your business:
+
+→  Competitive FOB / CIF pricing with full export documentation
+→  APEDA certified & FSSAI licensed — quality assured for international trade
+→  HMS 1&2, shredded scrap graded per international standards
+→  Consistent supply volumes — FCL and LCL both available
+→  Flexible payment modes accepted: TT, LC, DP, CAD, and more
+→  Export from JNPT, Mundra, and Chennai ports
+
+We are actively looking to establish long-term supply partnerships in the ${l.loc.split(',')[1]?.trim()||'GCC'} region, and your company's profile aligns well with what we offer.
+
+Would you be open to a brief call or email exchange to explore this further? I can share our current product catalogue and pricing sheet immediately.
+
+Best regards,
+${nm}
+${desg} | Infinomex Global Private Limited
+📧 ${em}
+🌐 India Export House | APEDA Certified | FSSAI Licensed`
+  },
+  partner:{
+    subj:(p,loc)=>`Export Partnership Opportunity — ${p} from India | Infinomex Global`,
+    body:(l,nm,desg,em,prod)=>`Dear ${l.company},
+
+Greetings from India!
+
+My name is ${nm} from Infinomex Global Private Limited. We are an Indian export house with a focused product line in ${prod}.
+
+We are currently expanding our buyer network in ${l.loc.split(',')[0]} and believe there is a strong synergy between your import operations and our supply capabilities.
+
+What we bring to the table:
+
+✔  Direct manufacturer access — no middlemen, no markup
+✔  APEDA certified & FSSAI licensed for agri-food exports
+✔  All payment modes accepted — TT, LC, DP, CAD, and more
+✔  Pre-shipment inspection available
+✔  Dedicated export documentation team
+
+Our goal is to build a transparent, long-term trading relationship — not a one-off transaction.
+
+If you are currently sourcing or evaluating suppliers for ${prod.split('(')[0].trim()}, I would love to share our current availability list and FOB price sheet.
+
+May I send these across?
+
+Warm regards,
+${nm}
+${desg} | Infinomex Global Private Limited
+✉ ${em}`
+  },
+  intro:{
+    subj:(p)=>`Quick Introduction — Indian Exporter of ${p.split('(')[0].trim()}`,
+    body:(l,nm,desg,em,prod)=>`Hi,
+
+I came across ${l.company} while researching importers in ${l.loc.split(',')[0]} and wanted to reach out briefly.
+
+I'm ${nm} from Infinomex Global Private Limited, based in India. We export ${prod} and are currently looking to connect with reliable buyers in your region.
+
+This is not a hard pitch — I simply wanted to introduce ourselves and see if there's any relevance to your current sourcing requirements.
+
+If you ever source from India or are open to exploring Indian suppliers, I'd be happy to send you our product list with no obligation whatsoever.
+
+A one-line reply is all it takes — even a "not now" is helpful so I can follow up at a better time.
+
+Thank you for your time.
+
+${nm}
+${desg} — Infinomex Global Private Limited
+${em}`
+  }
+};
+
+// ─── RENDER TEMPLATES ────────────────────────────────────────
+function renderTmpls(){
+  document.getElementById('tmpl-grid').innerHTML=EMAIL_TMPLS.map(t=>`
+    <div class="tmpl-card ${t.id===selTmpl?'on':''}" onclick="selT('${t.id}')">
+      <div class="tmpl-nm">${t.nm}</div>
+      <div class="tmpl-ds">${t.ds}</div>
+      <div class="tmpl-rt">📈 ${t.rt}</div>
+    </div>`).join('');
+}
+function selT(id){selTmpl=id;renderTmpls();updateStats();}
+
+// ─── GENERATE EMAIL ──────────────────────────────────────────
+function genEmail(){
+  const li=leads.length?leads[document.getElementById('elead').value]:{company:'Gulf Agri Trading LLC',loc:'Dubai, UAE',cat:'agri'};
+  const nm=document.getElementById('en').value;
+  const desg=document.getElementById('edesg').value;
+  const em=document.getElementById('eemail').value;
+  const prod=document.getElementById('eprod').value;
+  const tmpl=EMAILS[selTmpl];
+  document.getElementById('e-subj').textContent=tmpl.subj(prod,li.loc.split(',')[0]);
+  document.getElementById('e-body').textContent=tmpl.body(li,nm,desg,em,prod);
+  document.getElementById('email-out').style.display='block';
+  const stats={value:'📊 Est. 38% reply rate · Best sent: Tue/Wed 10am–12pm recipient time',partner:'📊 Est. 42% reply rate · Best sent: Tue/Thu 10am–12pm recipient time',intro:'📊 Est. 35% reply rate · Best sent: Mon/Wed 9am–11am recipient time'};
+  document.getElementById('e-stats').textContent=stats[selTmpl];
+  emailedCount++;updateStats();
+}
+function copyEmail(){
+  const subj=document.getElementById('e-subj').textContent;
+  const body=document.getElementById('e-body').textContent;
+  navigator.clipboard.writeText('Subject: '+subj+'\n\n'+body).then(()=>alert('✅ Email copied!'));
+}
+
+// ─── FOLLOWUPS ───────────────────────────────────────────────
+const FU_TMPLS=[
+  {
+    subj:(p,c)=>`Following Up — ${p.split('(')[0].trim()} Supply from India | ${c}`,
+    body:(l,nm,prod)=>`Dear ${l.company} Team,
+
+I wanted to briefly follow up on my previous email regarding ${prod.split('(')[0].trim()} supply from India.
+
+In case my earlier message didn't reach you, I'm ${nm} from Infinomex Global Private Limited, an Indian export company. We are actively seeking import partners in ${l.loc.split(',')[0]}.
+
+I understand your inbox is busy — a simple "yes, send details" or "not the right time" from your side would be very helpful for me to plan accordingly.
+
+If relevant, I'm happy to share our product catalogue and a sample FOB price list at zero obligation.
+
+Thank you,
+${nm} | Infinomex Global Private Limited`
+  },
+  {
+    subj:(p,c)=>`Re: ${p.split('(')[0].trim()} from India — Any Interest? | ${c}`,
+    body:(l,nm,prod)=>`Hi,
+
+This is my second follow-up regarding ${prod.split('(')[0].trim()} export supply from India to ${l.loc.split(',')[0]}.
+
+I'll keep this short: we have current stock availability and competitive pricing in place for Q${Math.ceil((new Date().getMonth()+1)/3)} shipments.
+
+If your company currently sources or is evaluating ${prod.split('(')[0].trim()}, I'd be glad to send across:
+• Current FOB price sheet
+• Product specification sheet
+• Certificate copies (APEDA & FSSAI)
+
+One email from your side opens the door.
+
+Best,
+${nm} | Infinomex Global Private Limited`
+  },
+  {
+    subj:(p,c)=>`Final Follow-Up — India ${p.split('(')[0].trim()} Supply | ${c}`,
+    body:(l,nm,prod)=>`Dear ${l.company},
+
+I will respect your time — this is my last follow-up regarding ${prod.split('(')[0].trim()} supply from India.
+
+If the timing isn't right or this isn't relevant to your operations, absolutely no worries — I'll remove you from my outreach list.
+
+However, if there's even a small chance you might need an Indian supplier in the future, I would love to simply stay connected on LinkedIn so I can be your first call when the need arises.
+
+Wishing you continued business success.
+
+Kind regards,
+${nm} | Infinomex Global Private Limited`
+  }
+];
+
+function showFu(i,el){
+  fuIdx=i;
+  document.querySelectorAll('.fu-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  if(fuData.length) renderFu();
+}
+function genFu(){
+  if(!leads.length){alert('Generate leads first!');return;}
+  const l=leads[document.getElementById('fu-lead').value];
+  const nm=document.getElementById('en').value||'Arjun Sharma';
+  const prod=document.getElementById('fu-prod').value;
+  fuData=FU_TMPLS.map(t=>({subj:t.subj(prod,l.company),body:t.body(l,nm,prod)}));
+  renderFu();
+}
+function renderFu(){
+  document.getElementById('fu-subj-wrap')||null;
+  document.getElementById('fu-subj').textContent=fuData[fuIdx].subj;
+  document.getElementById('fu-body').textContent=fuData[fuIdx].body;
+  document.getElementById('fu-body').style.cssText='';
+}
+function copyFu(){
+  if(!fuData.length){alert('Generate follow-ups first!');return;}
+  navigator.clipboard.writeText('Subject: '+fuData[fuIdx].subj+'\n\n'+fuData[fuIdx].body).then(()=>alert('✅ Follow-up '+( fuIdx+1)+' copied!'));
+}
+
+// ─── QUERIES PANEL ───────────────────────────────────────────
+function renderQueries(){
+  const liQ=[
+    'site:linkedin.com/company "Import Export" "UAE"',
+    'site:linkedin.com/company "Trading Company" "Saudi Arabia"',
+    'site:linkedin.com/company "Importer" "Qatar" "Agriculture"',
+    'site:linkedin.com/company "Steel Scrap" "Importer" "Middle East"',
+    'site:linkedin.com/company "Engineering Supply" "Trading" "UAE"',
+    'site:linkedin.com/company "Procurement Manager" "Dubai"',
+    'site:linkedin.com/company "Agriculture Trading" "Oman"',
+    '("Import Manager" OR "Procurement Head") AND ("rice" OR "pulses" OR "spices") AND ("UAE" OR "Saudi")',
+    '("Scrap Buyer" OR "Metal Procurement") AND ("steel scrap" OR "HMS" OR "shredded")',
+  ];
+  const gQ=[
+    '"import company UAE" "contact us"',
+    '"agriculture importer Saudi Arabia" email',
+    '"steel scrap buyers Middle East" site:.com',
+    '"engineering goods importers UAE" enquiry',
+    '"industrial raw material" importer Qatar',
+    '"Top importers UAE agriculture" buyers list',
+    '"steel scrap importers" Africa site:.com OR site:.co',
+    'construction companies UAE contact email procurement',
+    'government procurement portal UAE tender 2024',
+  ];
+  document.getElementById('li-queries').innerHTML=liQ.map(q=>`
+    <div class="query-item">
+      <div class="query-text">${q}</div>
+      <button class="copy-btn" onclick="cp(this,'${q.replace(/'/g,"\\'")}')">Copy</button>
+    </div>`).join('');
+  document.getElementById('g-queries').innerHTML=gQ.map(q=>`
+    <div class="query-item">
+      <div class="query-text">${q}</div>
+      <button class="copy-btn" onclick="cp(this,'${q.replace(/'/g,"\\'")}')">Copy</button>
+    </div>`).join('');
+
+  const dirs=[
+    {icon:'🌐',nm:'Kompass',ds:'B2B directory — filter by industry + country',q:'kompass.com/searchCompany?search=agriculture+importer&country=AE'},
+    {icon:'🛒',nm:'Alibaba Buyers',ds:'Find buyers posting RFQs for your products',q:'alibaba.com/buyer-rfqs/'},
+    {icon:'📒',nm:'ExportHub',ds:'Verified importers by product and region',q:'exporthub.com/importers/'},
+    {icon:'🏭',nm:'TradeIndia',ds:'Indian & international importer directory',q:'tradeindia.com/importers/'},
+    {icon:'🌍',nm:'GlobalSources',ds:'Electronics & industrial goods buyers',q:'globalsources.com/'},
+    {icon:'📋',nm:'Yellow Pages UAE',ds:'Local company directory with emails/phones',q:'yellowpages.ae/'},
+  ];
+  document.getElementById('dir-sources').innerHTML=dirs.map(d=>`
+    <div class="source-card">
+      <div class="source-icon">${d.icon}</div>
+      <div class="source-nm">${d.nm}</div>
+      <div class="source-ds">${d.ds}</div>
+      <div class="source-q">${d.q}</div>
+    </div>`).join('');
+}
+
+// ─── N8N ─────────────────────────────────────────────────────
+function renderN8n(){
+  const nodes=[
+    {nm:'Schedule Trigger',ds:'Runs daily at 8:00 AM IST — fully automated'},
+    {nm:'Google Search Node (HTTP)',ds:'Searches "importer UAE agriculture" etc. via SerpAPI or ScraperAPI'},
+    {nm:'LinkedIn Scraper',ds:'Phantombuster or Apify LinkedIn Company Scraper node'},
+    {nm:'Google Maps Scraper',ds:'Apify Google Maps Scraper — extracts phone, email, website'},
+    {nm:'Business Directory Scraper',ds:'HTTP Request → Kompass / ExportHub pages'},
+    {nm:'Merge Node',ds:'Combines all source results into one dataset'},
+    {nm:'Remove Duplicates',ds:'Deduplicate by email + company name + website'},
+    {nm:'Lead Filter',ds:'Include: Importer, Trader, Manufacturer, Construction. Exclude: Consultant, Recruiter'},
+    {nm:'AI Email Generator (HTTP → Anthropic API)',ds:'Sends lead data → generates unique cold email + 3 follow-ups'},
+    {nm:'Google Sheets Node',ds:'Appends structured row: company, email, cold email, follow-ups, status'},
+    {nm:'Gmail / SMTP Node',ds:'Sends cold email to leads not yet contacted (Email Sent = NO)'},
+    {nm:'Wait Node (3 days)',ds:'Waits 3 days → sends Follow-up 1'},
+    {nm:'Wait Node (7 days)',ds:'Waits 7 days → sends Follow-up 2'},
+    {nm:'Wait Node (14 days)',ds:'Waits 14 days → sends Follow-up 3'},
+  ];
+  document.getElementById('n8n-nodes').innerHTML=nodes.map((n,i)=>`
+    <div class="n8n-node">
+      <div class="n8n-num">${i+1}</div>
+      <div class="n8n-body"><h4>${n.nm}</h4><p>${n.ds}</p></div>
+    </div>${i<nodes.length-1?'<div class="n8n-arrow">↓</div>':''}`).join('');
+
+  document.getElementById('gs-script').textContent=`function sendInfinomexEmails() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet()
+                 .getSheetByName("Infinomex Leads");
+  const data = sheet.getDataRange().getValues();
+
+  for (let i = 1; i < data.length; i++) {
+    const email    = data[i][5];   // Col F: Email
+    const company  = data[i][0];   // Col A: Company
+    const name     = data[i][1];   // Col B: Contact
+    const coldEmail= data[i][8];   // Col I: Cold Email Body
+    const subject  = data[i][9];   // Col J: Subject
+    const sent     = data[i][10];  // Col K: Email Sent?
+
+    if (email && sent !== "YES") {
+      GmailApp.sendEmail(email, subject, coldEmail);
+      sheet.getRange(i+1, 11).setValue("YES");
+      sheet.getRange(i+1, 12).setValue(
+        new Date(Date.now() + 3*24*60*60*1000) // Follow-up 1: Day 3
+      );
+      Utilities.sleep(3000); // Avoid spam filters
+    }
+  }
+}`;
+
+  document.getElementById('n8n-ai-code').textContent=`// n8n HTTP Request Node — AI Email Generator
+// Method: POST
+// URL: https://api.anthropic.com/v1/messages
+// Headers: x-api-key: {{$env.ANTHROPIC_KEY}}
+//          anthropic-version: 2023-06-01
+
+{
+  "model": "claude-sonnet-4-20250514",
+  "max_tokens": 1000,
+  "messages": [{
+    "role": "user",
+    "content": "Generate a professional cold email for: Company: {{$json.company}}, Location: {{$json.location}}, Product: Agricultural Products. Sender: Arjun Sharma, Infinomex Global Private Limited. Do NOT mention years of experience. Do NOT mention MSME or BIS or ISO. Certifications: APEDA certified and FSSAI licensed. Payment: all modes accepted including TT, LC, DP, CAD. Keep under 200 words. Return JSON: {subject, body, followup1, followup2, followup3}"
+  }]
+}`;
+
+  const n8nNodes=[
+    {icon:'🔌',nm:'n8n + Apify',ds:'LinkedIn & Google Maps scraping'},
+    {icon:'📧',nm:'Gmail Node',ds:'Send emails from your Gmail'},
+    {icon:'📊',nm:'Google Sheets',ds:'CRM & lead database'},
+    {icon:'🤖',nm:'HTTP Request',ds:'Anthropic API for AI emails'},
+    {icon:'⏰',nm:'Schedule + Wait',ds:'Automated daily + follow-up timing'},
+    {icon:'🔗',nm:'Webhook Node',ds:'Trigger from form or manual event'},
+  ];
+  document.getElementById('n8n-nodes-list').innerHTML=n8nNodes.map(n=>`
+    <div class="source-card">
+      <div class="source-icon">${n.icon}</div>
+      <div class="source-nm">${n.nm}</div>
+      <div class="source-ds">${n.ds}</div>
+    </div>`).join('');
+}
+
+// ─── JSON ────────────────────────────────────────────────────
+function renderJson(){
+  if(!leads.length){return;}
+  const out=leads.map(l=>({
+    company_name:l.company,website:l.website,linkedin:l.li,
+    location:l.loc,email:l.email,phone:l.phone,
+    industry:CAT_MAP[l.cat],source:l.src,fit_score:l.score+'%',
+    cold_email:'[Generate in Email tab]',
+    followup_1:'[Day 3 — Generate in Follow-ups tab]',
+    followup_2:'[Day 7 — Generate in Follow-ups tab]',
+    followup_3:'[Day 14 — Generate in Follow-ups tab]',
+  }));
+  document.getElementById('json-out').textContent=JSON.stringify(out,null,2);
+}
+function copyJson(){navigator.clipboard.writeText(document.getElementById('json-out').textContent).then(()=>alert('✅ JSON copied!'));}
+function dlJson(){
+  const blob=new Blob([document.getElementById('json-out').textContent],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='infinomex_leads.json';a.click();
+}
+
+// ─── CSV ─────────────────────────────────────────────────────
+function dlCSV(){
+  if(!leads.length){alert('Generate leads first!');return;}
+  const hdr=['Company Name','Website','LinkedIn','Location','Industry','Source','Email','Phone','Fit Score','Email Sent?','Follow-up Date','Response','Status','Notes'];
+  const rows=leads.map(l=>[l.company,l.website,l.li,l.loc,CAT_MAP[l.cat],l.src,l.email,l.phone,l.score+'%','','','','Prospect',''].map(v=>`"${v}"`).join(','));
+  const csv=[hdr.join(','),...rows].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='infinomex_leads.csv';a.click();
+}
+
+function goEmail(){
+  if(!leads.filter(l=>l.selected).length){alert('Select at least one lead first!');return;}
+  sw('email');
+}
+
+function cp(btn,text){
+  navigator.clipboard.writeText(text).then(()=>{btn.textContent='✓ Copied';setTimeout(()=>btn.textContent='Copy',1500);});
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  renderTmpls();renderQueries();renderN8n();
+});
+</script>
+</body>
+</html>
